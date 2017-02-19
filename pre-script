@@ -1,0 +1,49 @@
+#!/bin/bash -e
+
+# This is for all the pre-steps for helping encode through HandBrake
+
+# Copyright © 2017 JPCDI, JPartain89 and Justin Partain
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Program information
+PROGRAM_NAME="pre-script"
+REPO_NAME="handbrakeprepost"
+VERSION="1.0.0"
+USERNAME=jpartain89
+
+if [[ ! -e "$(command -v allunix)" ]]; then
+    echo "AllUnix file is missing."
+    wget -O - http://bit.ly/jp_allunix | bash
+fi
+
+source allunix
+
+function USAGE() {
+
+}
+
+src_location=$1
+dest_location=$2
+if [[ "$src_location" == "" ]]; then USAGE; exit 1; fi
+if [[ "$dest_location" == "" ]]; then USAGE; exit 1; fi
+
+function move_files() {
+    while IFS= read -r line; do
+        echo "${RED}Moving ${line} from ${line} to ${dest_location}.${NORMAL}"
+        sudo mv "${line}" "${dest_location}"
+    done < <(find "$src_location" -type f -depth 1 \
+        \( -iname "*.avi" -o "*.wmv" -o "*.flv" \) \
+        -exec echo {} \; )
+}
